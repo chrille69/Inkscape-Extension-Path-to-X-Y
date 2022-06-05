@@ -4,10 +4,29 @@
   <id>path-to-x-y</id>
   <dependency type="executable" location="extensions">path-to-x-y.py</dependency>
 
-  <param name="x_min" type="string" gui-text="Minimum x-Achse">0</param>
-  <param name="x_max" type="string" gui-text="Maximun x-Achse">1</param>
-  <param name="y_min" type="string" gui-text="Minimum y-Achse">0</param>
-  <param name="y_max" type="string" gui-text="Maximun y-Achse">1</param>
+  <param name="tab" type="notebook">
+    <page name="rectangle" _gui-text="Rectangle">
+      <param name="x_min" type="string" _gui-text="Minimum x-axis">0</param>
+      <param name="x_max" type="string" _gui-text="Maximun x-axis">1</param>
+      <param name="y_min" type="string" _gui-text="Minimum y-axis">0</param>
+      <param name="y_max" type="string" _gui-text="Maximun y-axis">1</param>
+    </page>
+    <page name="csv" _gui-text="CSV">
+      <param name="csv_delimiter" type="optiongroup" _gui-text="Field seperator" appearance="minimal">
+        <option value=";">;</option>
+        <option value=",">,</option>
+        <option value=":">:</option>
+        <option value=" ">Space</option>
+        <option value="\t">Tabulator</option>
+      </param>
+      <param name="x_format" type="string" _gui-text="X format specifier">9.4f</param>
+      <param name="y_format" type="string" _gui-text="Y format specifier">9.4f</param>
+    </page>
+    <page name="info" _gui-text="Help">
+      <param name="help_text" type="description">Converts points of a path into x-y-values.
+      Create a rectangle and select both (path and rectangle).</param>
+    </page>
+  </param>
 
   <effect>
     <object-type>all</object-type>
