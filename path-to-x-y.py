@@ -24,13 +24,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from inkex import EffectExtension, PathElement, Rectangle, errormsg
 
+
 class Path_To_X_Y(EffectExtension):
     def __init__(self):
         super().__init__()
+        self.arg_parser.add_argument("--tab")
         self.arg_parser.add_argument("--x_min", dest="x_min", action="store", type=float, default=0)
         self.arg_parser.add_argument("--x_max", dest="x_max", action="store", type=float, default=1)
         self.arg_parser.add_argument("--y_min", dest="y_min", action="store", type=float, default=0)
         self.arg_parser.add_argument("--y_max", dest="y_max", action="store", type=float, default=1)
+        self.arg_parser.add_argument("--csv_delimiter", dest="csv_delimiter", action="store", type=str, default=";")
+        self.arg_parser.add_argument("--x_format", dest="x_format", action="store", type=str, default="9.4f")
+        self.arg_parser.add_argument("--y_format", dest="y_format", action="store", type=str, default="9.4f")
 
     def rechteck_koordinate(self, v, achse):
         min = self.rechteck.left
@@ -50,26 +55,25 @@ class Path_To_X_Y(EffectExtension):
 
     def effect(self):
         xystring = ''
-        delimeter = ';'
         if self.options.y_min == self.options.y_max:
-            errormsg('y_min und y_max dürfen nicht gleich sein')
+            errormsg(_('y_min and y_max must not be equal.'))
         if self.options.x_min == self.options.x_max:
-            errormsg('x_min und x_max dürfen nicht gleich sein')
+            errormsg('x_min and x_max must not be equal.')
 
 
         pfade = self.svg.selection.filter(PathElement)
         rechtecke = self.svg.selection.filter(Rectangle)
         if len(pfade) != 1 or len(rechtecke) != 1:
-            errormsg('Bitte genau einen Pfad und ein Rechteck auswählen (Shift-Klick).')
+            errormsg(_('Please select exactly one path and one rectangle (Shift-Click).'))
             return
         self.pfad = pfade[0]
         self.rechteck = rechtecke[0]
 
         if self.rechteck.top == self.rechteck.bottom:
-            errormsg('Das Rechteck muss eine von Null verschiedene Höhe haben')
+            errormsg(_('The rectangle height must not be zero.'))
             return
         if self.rechteck.left == self.rechteck.right:
-            errormsg('Das Rechteck muss eine von Null verschiedene Breite haben')
+            errormsg(_('The rectangle width must not be zero.'))
             return
 
         for p in self.pfad.path.end_points:
@@ -77,7 +81,7 @@ class Path_To_X_Y(EffectExtension):
             ry = self.rechteck_koordinate(p.y, 'y')
             vx = self.wert_koordinate(rx, 'x')
             vy = self.wert_koordinate(ry, 'y')
-            xystring += f'{vx}{delimeter}{vy}\n'
+            xystring += f'{vx:{self.options.x_format}}{self.options.csv_delimiter}{vy:{self.options.y_format}}\n'
         errormsg(xystring)
 
 
